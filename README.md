@@ -108,6 +108,6 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## Contact
 
-Your Name - [your-email@example.com]
+Your Name - ghost
 
-Project Link: [https://github.com/yourusername/e-commerce-react]
+Project Link: https://github.com/Anon23261/Module11-Mini-Proect/edit/main/README.md
