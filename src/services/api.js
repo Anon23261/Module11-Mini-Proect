@@ -5,8 +5,40 @@ const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  timeout: 5000 // 5 second timeout
 });
+
+// Add request interceptor for error handling
+api.interceptors.request.use(
+  config => config,
+  error => {
+    console.error('API Request Error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for error handling
+api.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.code === 'ECONNABORTED') {
+      return Promise.reject({ 
+        response: { 
+          data: { message: 'Request timed out. Please check your connection.' }
+        }
+      });
+    }
+    if (!error.response) {
+      return Promise.reject({ 
+        response: { 
+          data: { message: 'Unable to connect to the server. Please ensure the backend is running.' }
+        }
+      });
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Customer API calls
 export const customerAPI = {

@@ -8,6 +8,7 @@ import { useAppContext } from '../../context/AppContext';
 const ProductList = () => {
   const { products, setProducts, setLoading, setError } = useAppContext();
   const [showAlert, setShowAlert] = useState({ show: false, message: '', variant: 'success' });
+  const [localError, setLocalError] = useState(null);
 
   useEffect(() => {
     fetchProducts();
@@ -16,10 +17,13 @@ const ProductList = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
+      setLocalError(null);
       const response = await productAPI.getAll();
       setProducts(response.data);
     } catch (error) {
-      setError('Failed to fetch products');
+      const errorMessage = error.response?.data?.message || 'Failed to connect to the server. Please ensure the backend server is running.';
+      setLocalError(errorMessage);
+      setError(errorMessage);
       console.error('Error fetching products:', error);
     } finally {
       setLoading(false);
@@ -76,6 +80,12 @@ const ProductList = () => {
           dismissible
         >
           {showAlert.message}
+        </Alert>
+      )}
+
+      {localError && (
+        <Alert variant="danger" onClose={() => setLocalError(null)} dismissible>
+          {localError}
         </Alert>
       )}
 
