@@ -1,6 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
+import { ToastContainer } from 'react-toastify';
 import Navigation from './components/common/Navigation';
 import CustomerList from './components/customers/CustomerList';
 import CustomerForm from './components/customers/CustomerForm';
@@ -11,35 +12,58 @@ import ProductDetails from './components/products/ProductDetails';
 import OrderForm from './components/orders/OrderForm';
 import OrderHistory from './components/orders/OrderHistory';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
 function App() {
   return (
-    <Router>
+    <>
       <Navigation />
       <Container className="mt-4">
-        <Routes>
+        <Routes future={{ v7_startTransition: true }}>
           {/* Customer Routes */}
-          <Route path="/customers" element={<CustomerList />} />
-          <Route path="/customers/new" element={<CustomerForm />} />
-          <Route path="/customers/:id" element={<CustomerDetails />} />
-          <Route path="/customers/:id/edit" element={<CustomerForm />} />
+          <Route path="customers">
+            <Route index element={<CustomerList />} />
+            <Route path="new" element={<CustomerForm />} />
+            <Route path=":id">
+              <Route index element={<CustomerDetails />} />
+              <Route path="edit" element={<CustomerForm />} />
+            </Route>
+          </Route>
           
           {/* Product Routes */}
-          <Route path="/products" element={<ProductList />} />
-          <Route path="/products/new" element={<ProductForm />} />
-          <Route path="/products/:id" element={<ProductDetails />} />
-          <Route path="/products/:id/edit" element={<ProductForm />} />
-          
+          <Route path="products">
+            <Route index element={<ProductList />} />
+            <Route path="new" element={<ProductForm />} />
+            <Route path=":id">
+              <Route index element={<ProductDetails />} />
+              <Route path="edit" element={<ProductForm />} />
+            </Route>
+          </Route>
+
           {/* Order Routes */}
-          <Route path="/orders/new" element={<OrderForm />} />
-          <Route path="/orders/history" element={<OrderHistory />} />
-          
+          <Route path="orders">
+            <Route index element={<OrderHistory />} />
+            <Route path="new" element={<OrderForm />} />
+          </Route>
+
           {/* Default Route */}
-          <Route path="/" element={<ProductList />} />
+          <Route path="/" element={<Navigate to="/products" replace />} />
         </Routes>
       </Container>
-    </Router>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+    </>
   );
 }
 

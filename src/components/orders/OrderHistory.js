@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Table, Button, Alert, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaEye } from 'react-icons/fa';
@@ -10,11 +10,7 @@ const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [showAlert, setShowAlert] = useState({ show: false, message: '', variant: 'success' });
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       const response = await orderAPI.getAll();
@@ -25,7 +21,11 @@ const OrderHistory = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setLoading, setError, setOrders]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   const handleCancel = async (id) => {
     if (window.confirm('Are you sure you want to cancel this order?')) {
