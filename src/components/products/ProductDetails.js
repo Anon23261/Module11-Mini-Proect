@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card, Button, ListGroup, Alert, Form } from 'react-bootstrap';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FaEdit, FaTrash } from 'react-icons/fa';
@@ -13,11 +13,7 @@ const ProductDetails = () => {
   const [stockAdjustment, setStockAdjustment] = useState('');
   const [showAlert, setShowAlert] = useState({ show: false, message: '', variant: 'success' });
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       setLoading(true);
       const response = await productAPI.getById(id);
@@ -28,7 +24,11 @@ const ProductDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, setLoading, setError, setProduct]);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]);
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this product?')) {

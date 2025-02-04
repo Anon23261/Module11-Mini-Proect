@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Table, Button, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
@@ -9,11 +9,7 @@ const CustomerList = () => {
   const { customers, setCustomers, setLoading, setError } = useAppContext();
   const [showAlert, setShowAlert] = useState({ show: false, message: '', variant: 'success' });
 
-  useEffect(() => {
-    fetchCustomers();
-  }, []);
-
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     try {
       setLoading(true);
       const response = await customerAPI.getAll();
@@ -24,7 +20,11 @@ const CustomerList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setLoading, setError, setCustomers]);
+
+  useEffect(() => {
+    fetchCustomers();
+  }, [fetchCustomers]);
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this customer?')) {

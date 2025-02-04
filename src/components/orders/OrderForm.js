@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Form, Button, Alert, Table } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { orderAPI, customerAPI, productAPI } from '../../services/api';
@@ -18,11 +18,7 @@ const OrderForm = () => {
     orderDate: new Date().toISOString().split('T')[0]
   };
 
-  useEffect(() => {
-    fetchCustomersAndProducts();
-  }, []);
-
-  const fetchCustomersAndProducts = async () => {
+  const fetchCustomersAndProducts = useCallback(async () => {
     try {
       setLoading(true);
       const [customersResponse, productsResponse] = await Promise.all([
@@ -37,7 +33,11 @@ const OrderForm = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setLoading, setError, setCustomers, setProducts]);
+
+  useEffect(() => {
+    fetchCustomersAndProducts();
+  }, [fetchCustomersAndProducts]);
 
   const handleAddProduct = (productId) => {
     const product = products.find(p => p.id === productId);

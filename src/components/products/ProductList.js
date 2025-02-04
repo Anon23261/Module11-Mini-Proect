@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Table, Button, Alert, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
@@ -8,23 +8,27 @@ import { useAppContext } from '../../context/AppContext';
 const ProductList = () => {
   const { products, setProducts, setLoading, setError } = useAppContext();
   const [showAlert, setShowAlert] = useState({ show: false, message: '', variant: 'success' });
+  const [localError, setLocalError] = useState(null);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
+      setLocalError(null);
       const response = await productAPI.getAll();
       setProducts(response.data);
     } catch (error) {
-      setError('Failed to fetch products');
+      const errorMessage = error.response?.data?.message || 'Failed to connect to the server. Please ensure the backend server is running.';
+      setLocalError(errorMessage);
+      setError(errorMessage);
       console.error('Error fetching products:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [setLoading, setLocalError, setError, setProducts]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
@@ -76,6 +80,12 @@ const ProductList = () => {
           dismissible
         >
           {showAlert.message}
+        </Alert>
+      )}
+
+      {localError && (
+        <Alert variant="danger" onClose={() => setLocalError(null)} dismissible>
+          {localError}
         </Alert>
       )}
 
