@@ -163,71 +163,73 @@ const ProductList = () => {
             </InputGroup>
           </div>
 
-      {showAlert.show && (
-        <Alert 
-          variant={showAlert.variant}
-          onClose={() => setShowAlert({ show: false, message: '', variant: 'success' })}
-          dismissible
-        >
-          {showAlert.message}
-        </Alert>
-      )}
+          {showAlert.show && (
+            <Alert 
+              variant={showAlert.variant}
+              onClose={() => setShowAlert({ show: false, message: '', variant: 'success' })}
+              dismissible
+            >
+              {showAlert.message}
+            </Alert>
+          )}
 
-      {localError && (
-        <Alert variant="danger" onClose={() => setLocalError(null)} dismissible>
-          {localError}
-        </Alert>
-      )}
+          {localError && (
+            <Alert variant="danger" onClose={() => setLocalError(null)} dismissible>
+              {localError}
+            </Alert>
+          )}
 
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Stock Level</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr key={product.id}>
-              <td>{product.name}</td>
-              <td>${product.price.toFixed(2)}</td>
-              <td>{product.stockLevel}</td>
-              <td>{getStockStatus(product.stockLevel)}</td>
-              <td>
-                <div className="d-flex gap-2">
-                  <Button
-                    as={Link}
-                    to={`/products/${product.id}`}
-                    variant="info"
-                    size="sm"
-                  >
-                    <FaEye />
-                  </Button>
-                  <Button
-                    as={Link}
-                    to={`/products/${product.id}/edit`}
-                    variant="warning"
-                    size="sm"
-                  >
-                    <FaEdit />
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    <FaTrash />
-                  </Button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </div>
+          <Table striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock Level</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product) => (
+                <tr key={product.id}>
+                  <td>{product.name}</td>
+                  <td>${product.price.toFixed(2)}</td>
+                  <td>{product.stockLevel}</td>
+                  <td>{getStockStatus(product.stockLevel)}</td>
+                  <td>
+                    <div className="d-flex gap-2">
+                      <Button
+                        as={Link}
+                        to={`/products/${product.id}`}
+                        variant="info"
+                        size="sm"
+                      >
+                        <FaEye />
+                      </Button>
+                      <Button
+                        as={Link}
+                        to={`/products/${product.id}/edit`}
+                        variant="warning"
+                        size="sm"
+                      >
+                        <FaEdit />
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleDelete(product.id)}
+                      >
+                        <FaTrash />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 
