@@ -72,9 +72,9 @@ api.interceptors.response.use(
 
 // Customer API calls
 export const customerAPI = {
-  getAll: () => api.get('/customers'),
-  getById: (id) => api.get(`/customers/${id}`),
-  create: (data) => api.post('/customers', {
+  getAll: () => api.get('/api/customers'),
+  getById: (id) => api.get(`/api/customers/${id}`),
+  create: (data) => api.post('/api/customers', {
     name: data.name,
     email: data.email,
     phone: data.phone,
@@ -82,10 +82,9 @@ export const customerAPI = {
     company: data.company,
     website: data.website,
     notes: data.notes,
-    status: data.status || 'active',
-    lastUpdated: data.lastUpdated || new Date().toISOString()
+    status: data.status || 'active'
   }),
-  update: (id, data) => api.put(`/customers/${id}`, {
+  update: (id, data) => api.put(`/api/customers/${id}`, {
     name: data.name,
     email: data.email,
     phone: data.phone,
@@ -93,84 +92,91 @@ export const customerAPI = {
     company: data.company,
     website: data.website,
     notes: data.notes,
-    status: data.status || 'active',
-    lastUpdated: data.lastUpdated || new Date().toISOString()
+    status: data.status || 'active'
   }),
-  delete: (id) => api.delete(`/customers/${id}`)
+  delete: (id) => api.delete(`/api/customers/${id}`)
 };
 
 // Product API calls
 export const productAPI = {
-  getAll: () => api.get('/products'),
-  getById: (id) => api.get(`/products/${id}`),
-  create: (data) => api.post('/products', {
+  getAll: () => api.get('/api/products'),
+  getById: (id) => api.get(`/api/products/${id}`),
+  create: (data) => api.post('/api/products', {
     name: data.name,
     description: data.description,
     price: parseFloat(data.price),
-    stock: parseInt(data.stockLevel, 10),
-    imageUrl: data.imageUrl,
+    stock_level: parseInt(data.stockLevel, 10),
+    image_url: data.imageUrl,
     category: data.category,
     sku: data.sku,
     brand: data.brand,
-    weight: data.weight,
+    weight: parseFloat(data.weight),
     dimensions: data.dimensions,
-    features: data.features,
-    lastUpdated: data.lastUpdated || new Date().toISOString()
+    features: data.features
   }),
-  update: (id, data) => api.put(`/products/${id}`, {
+  update: (id, data) => api.put(`/api/products/${id}`, {
     name: data.name,
     description: data.description,
     price: parseFloat(data.price),
-    stock: parseInt(data.stockLevel, 10),
-    imageUrl: data.imageUrl,
+    stock_level: parseInt(data.stockLevel, 10),
+    image_url: data.imageUrl,
     category: data.category,
     sku: data.sku,
     brand: data.brand,
-    weight: data.weight,
+    weight: parseFloat(data.weight),
     dimensions: data.dimensions,
-    features: data.features,
-    lastUpdated: data.lastUpdated || new Date().toISOString()
+    features: data.features
   }),
-  delete: (id) => api.delete(`/products/${id}`),
-  updateStock: (id, quantity) => api.patch(`/products/${id}/stock`, { quantity })
+  delete: (id) => api.delete(`/api/products/${id}`),
+  updateStock: (id, quantity) => api.patch(`/api/products/${id}/stock`, { quantity })
 };
 
 // Order API calls
 export const orderAPI = {
-  getAll: () => api.get('/orders'),
-  getById: (id) => api.get(`/orders/${id}`),
-  create: (data) => api.post('/orders', {
-    customerId: data.customerId,
-    products: data.products.map(item => ({
-      productId: item.productId,
+  getAll: () => api.get('/api/orders'),
+  getById: (id) => api.get(`/api/orders/${id}`),
+  create: (data) => api.post('/api/orders', {
+    customer_id: data.customerId,
+    items: data.products.map(item => ({
+      product_id: item.productId,
       quantity: parseInt(item.quantity, 10)
-    })),
-    total: parseFloat(data.total)
+    }))
   }),
-  update: (id, data) => api.put(`/orders/${id}`, data),
-  delete: (id) => api.delete(`/orders/${id}`),
-  getCustomerOrders: (customerId) => api.get(`/customers/${customerId}/orders`)
+  update: (id, data) => api.put(`/api/orders/${id}`, {
+    status: data.status
+  }),
+  delete: (id) => api.delete(`/api/orders/${id}`),
+  getCustomerOrders: (customerId) => api.get(`/api/orders/customer/${customerId}`)
 };
 
 // Data transformation helpers
 const transformCustomer = (customer) => ({
   ...customer,
-  phone: customer.phone_number || customer.phone
+  lastUpdated: customer.updated_at,
+  createdAt: customer.created_at
 });
 
 const transformProduct = (product) => ({
   ...product,
   price: parseFloat(product.price),
-  stock: parseInt(product.stock, 10)
+  stockLevel: product.stock_level,
+  imageUrl: product.image_url,
+  lastUpdated: product.updated_at,
+  createdAt: product.created_at
 });
 
 const transformOrder = (order) => ({
   ...order,
+  customerId: order.customer_id,
   total: parseFloat(order.total),
-  products: order.products.map(item => ({
+  items: order.items.map(item => ({
     ...item,
-    quantity: parseInt(item.quantity, 10)
-  }))
+    productId: item.product_id,
+    quantity: parseInt(item.quantity, 10),
+    product: transformProduct(item.product)
+  })),
+  lastUpdated: order.updated_at,
+  createdAt: order.created_at
 });
 
 // Add response interceptor to transform backend data to frontend format
