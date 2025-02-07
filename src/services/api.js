@@ -77,12 +77,24 @@ export const customerAPI = {
   create: (data) => api.post('/customers', {
     name: data.name,
     email: data.email,
-    phone: data.phone
+    phone: data.phone,
+    address: data.address,
+    company: data.company,
+    website: data.website,
+    notes: data.notes,
+    status: data.status || 'active',
+    lastUpdated: data.lastUpdated || new Date().toISOString()
   }),
   update: (id, data) => api.put(`/customers/${id}`, {
     name: data.name,
     email: data.email,
-    phone: data.phone
+    phone: data.phone,
+    address: data.address,
+    company: data.company,
+    website: data.website,
+    notes: data.notes,
+    status: data.status || 'active',
+    lastUpdated: data.lastUpdated || new Date().toISOString()
   }),
   delete: (id) => api.delete(`/customers/${id}`)
 };
@@ -95,13 +107,29 @@ export const productAPI = {
     name: data.name,
     description: data.description,
     price: parseFloat(data.price),
-    stock: parseInt(data.stock, 10)
+    stock: parseInt(data.stockLevel, 10),
+    imageUrl: data.imageUrl,
+    category: data.category,
+    sku: data.sku,
+    brand: data.brand,
+    weight: data.weight,
+    dimensions: data.dimensions,
+    features: data.features,
+    lastUpdated: data.lastUpdated || new Date().toISOString()
   }),
   update: (id, data) => api.put(`/products/${id}`, {
     name: data.name,
     description: data.description,
     price: parseFloat(data.price),
-    stock: parseInt(data.stock, 10)
+    stock: parseInt(data.stockLevel, 10),
+    imageUrl: data.imageUrl,
+    category: data.category,
+    sku: data.sku,
+    brand: data.brand,
+    weight: data.weight,
+    dimensions: data.dimensions,
+    features: data.features,
+    lastUpdated: data.lastUpdated || new Date().toISOString()
   }),
   delete: (id) => api.delete(`/products/${id}`),
   updateStock: (id, quantity) => api.patch(`/products/${id}/stock`, { quantity })
